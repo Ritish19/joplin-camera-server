@@ -1,0 +1,57 @@
+[DEFAULT]
+# Ban hosts for 1 hour by default
+bantime = 3600
+
+# Host is banned if it has generated "maxretry" during "findtime" seconds
+findtime = 600
+maxretry = 5
+
+# Email notifications (optional)
+# destemail = admin@ritish.com.np
+# sender = fail2ban@ritish.com.np
+# mta = sendmail
+
+# Log level
+loglevel = INFO
+
+[sshd]
+enabled = true
+port = ssh
+filter = sshd
+logpath = /var/log/auth.log
+maxretry = 3
+bantime = 7200
+
+[nginx-http-auth]
+enabled = true
+port = http,https
+filter = nginx-http-auth
+logpath = /var/log/nginx/error.log
+maxretry = 3
+bantime = 3600
+
+[nginx-limit-req]
+enabled = true
+port = http,https
+filter = nginx-limit-req
+logpath = /var/log/nginx/error.log
+maxretry = 10
+findtime = 600
+bantime = 600
+
+[nginx-badbots]
+enabled = true
+port = http,https
+filter = nginx-badbots
+logpath = /var/log/nginx/access.log
+maxretry = 2
+bantime = 86400
+
+[joplin-auth]
+enabled = true
+port = http,https
+filter = joplin-auth
+logpath = /var/log/nginx/access.log
+maxretry = 5
+findtime = 300
+bantime = 1800

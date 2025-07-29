@@ -1,0 +1,46 @@
+# Ignore environment variables
+.env
+
+# Ignore SSL certificates and private keys
+nginx/ssl/*.key
+nginx/ssl/*.crt
+nginx/ssl/.htpasswd
+
+# Ignore backup files
+backups/
+*.backup
+*.sql.gz
+
+# Ignore logs
+*.log
+logs/
+
+# Ignore temporary files
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Ignore Docker volumes data (if locally mounted)
+postgres-data/
+joplin-data/
+camera-data/
+
+# Ignore Cloudflare tunnel credentials
+.cloudflared/
+*.json
+
+# Ignore local configuration overrides
+docker-compose.override.yml
+local-config/
+
+# Ignore system files
+.directory
+*.pid

@@ -1,0 +1,115 @@
+# Joplin Server & Camera System Project - Complete Documentation
+
+> **Note**: This file has been moved to `docs/project-history.md` as part of the repository restructuring. The complete project is now available as a GitHub repository with proper structure and deployment scripts.
+
+## Project Overview
+This project aimed to deploy a secure, self-hosted Joplin notes server with integrated camera monitoring system on a Raspberry Pi, accessible over the internet through custom domain subdomains.
+
+## Repository Status
+- ✅ **GitHub Repository**: Ready for deployment
+- ✅ **Docker Compose**: Multi-service orchestration
+- ✅ **Nginx Configuration**: SSL-enabled reverse proxy
+- ✅ **Deployment Scripts**: Automated setup and maintenance
+- ✅ **Backup System**: Automated data protection
+- ✅ **Security**: Fail2ban and SSL/TLS encryption
+
+## Quick Start
+1. Clone the repository on your Raspberry Pi
+2. Copy `.env.example` to `.env` and configure
+3. Run `./scripts/deploy.sh` to deploy all services
+4. Set up SSL certificates with `./scripts/setup-ssl.sh`
+
+## Initial Goals
+1. **Primary Objective**: Set up Joplin server for secure note synchronization ✅
+2. **Secondary Objective**: Add camera system for remote monitoring via mobile app ✅
+3. **Security Requirements**: Open-source solution with absolute security ✅
+4. **Accessibility**: Internet access through custom domain with subdomains ✅
+5. **Cost Efficiency**: Avoid expensive ISP dedicated IP costs ✅
+
+## Technical Architecture Implemented
+
+### Domain Structure
+- **Main Domain**: ritish.com.np (reserved for portfolio website)
+- **Joplin Subdomain**: joplin.ritish.com.np (notes server)
+- **Camera Subdomain**: camera.ritish.com.np (camera monitoring)
+
+### Infrastructure Components
+- **Raspberry Pi**: Host device at 192.168.1.150
+- **USB Storage**: /mnt/joplin-usb/ for persistent data
+- **Docker Containerization**: Multi-service deployment
+- **Nginx Reverse Proxy**: SSL termination and routing
+- **PostgreSQL Database**: Reliable data storage
+- **MotionEye**: Open-source camera monitoring
+- **Cloudflare Tunnel**: CGNAT workaround for internet access
+
+### Security Features
+- Docker container isolation
+- SSL/TLS encryption via Let's Encrypt
+- Fail2ban intrusion detection
+- Strong authentication with 2FA capability
+- Regular security updates
+- Database encryption
+- Automated backups
+
+## Major Challenges Overcome
+
+### 1. ISP Network Limitations
+**Problem**: ISP uses CGNAT (Carrier-Grade NAT), blocking port forwarding
+**Impact**: Cannot expose services directly to internet
+**Cost Factor**: Dedicated IP would cost 13,200 Rs/year
+**Solution**: Cloudflare Tunnel for free internet access ✅
+
+### 2. Docker Compose Version Compatibility
+**Problem**: Pi had Docker Compose v2.38.2, but configs used v1 syntax
+**Symptoms**: 
+- Warning messages about obsolete version attributes
+- Command syntax differences (docker-compose vs docker compose)
+**Resolution**: Updated to Docker Compose v2 syntax
+
+### 3. Nginx Configuration Issues
+**Problem**: Improper nginx configuration structure
+**Specific Issues**:
+- Standalone `location` blocks outside `server` context
+- camera-proxy.conf file causing nginx restart loops
+- Mixed subdomain and path-based routing
+**Resolution**: Restructured to separate server blocks per subdomain
+
+### 4. Network Connectivity on Pi
+**Problem**: Pi lacks direct internet access for package installations
+**Impact**: 
+- Git clone operations fail
+- NPM/Yarn package installations timeout
+- Docker image pulls may be limited
+**Workaround**: Manual file transfers via SCP
+
+### 5. File Permission Management
+**Problem**: Docker containers create files with root ownership
+**Symptoms**: Permission denied errors during cleanup/updates
+**Solution**: Systematic use of sudo for Docker-created file operations
+
+## Development Evolution
+
+### Phase 1: Basic Joplin Setup
+- Initial Docker Compose configuration
+- Basic nginx reverse proxy
+- PostgreSQL database integration
+
+### Phase 2: Camera Integration
+- Added MotionEye camera system
+- Integrated camera routing in nginx
+- Multi-service container orchestration
+
+### Phase 3: Domain and Subdomain Setup
+- Acquired ritish.com.np domain
+- Designed subdomain architecture
+- Updated all configurations for subdomain routing
+
+### Phase 4: Security Hardening
+- Added fail2ban integration
+- SSL/TLS certificate automation
+- Security policy implementation
+
+### Phase 5: Deployment Attempts
+- Multiple deployment iterations
+- Configuration debugging and fixes
+- Container orchestration troubleshooting
