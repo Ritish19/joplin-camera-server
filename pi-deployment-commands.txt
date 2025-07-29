@@ -1,25 +1,41 @@
-# Pi Deployment Commands
+# Pi Deployment Commands - PENDRIVE SETUP
 # Copy and paste these commands on your Raspberry Pi
 
-# 1. First-time setup on Raspberry Pi
-echo "=== RASPBERRY PI DEPLOYMENT COMMANDS ==="
-echo ""
-echo "1. SSH into your Raspberry Pi:"
-echo "ssh pi@192.168.1.150"
-echo ""
-echo "2. Clone the repository:"
-echo "git clone https://github.com/Ritish19/joplin-camera-server.git"
-echo "cd joplin-camera-server"
-echo ""
-echo "3. Configure environment:"
-echo "cp .env.example .env"
-echo "nano .env  # Edit with your settings"
-echo ""
-echo "4. Make scripts executable:"
-echo "chmod +x scripts/*.sh"
-echo ""
-echo "5. Deploy the system:"
-echo "./scripts/deploy.sh"
+# STEP 1: SSH into Raspberry Pi from PowerShell
+# Run this in PowerShell on Windows:
+# ssh pi@192.168.1.150
+
+# STEP 2: Setup pendrive and clone repository
+# First, find and mount the pendrive
+sudo fdisk -l  # Find your pendrive (usually /dev/sda1 or /dev/sdb1)
+sudo mkdir -p /mnt/pendrive
+sudo mount /dev/sda1 /mnt/pendrive  # Replace sda1 with your actual device
+
+# Make pendrive the permanent mount point for our project
+echo "/dev/sda1 /mnt/pendrive ext4 defaults,nofail 0 2" | sudo tee -a /etc/fstab
+
+# Create project directory on pendrive
+sudo mkdir -p /mnt/pendrive/joplin-server
+sudo chown -R pi:pi /mnt/pendrive/joplin-server
+cd /mnt/pendrive/joplin-server
+
+# Clone the repository to pendrive
+git clone https://github.com/Ritish19/joplin-camera-server.git .
+
+# Update docker-compose.yml to use pendrive paths
+cp .env.example .env
+nano .env  # Edit with your settings
+
+# Make scripts executable
+chmod +x scripts/*.sh
+
+# Update the deploy script to use pendrive paths
+sed -i 's|/mnt/joplin-usb|/mnt/pendrive|g' docker-compose.yml
+sed -i 's|/mnt/joplin-usb|/mnt/pendrive|g' scripts/deploy.sh
+sed -i 's|/mnt/joplin-usb|/mnt/pendrive|g' scripts/backup.sh
+
+# Deploy the system
+./scripts/deploy.sh
 echo ""
 echo "6. Set up SSL certificates:"
 echo "./scripts/setup-ssl.sh"

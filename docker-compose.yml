@@ -12,7 +12,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - /mnt/joplin-usb/postgres-backup:/backup
+      - /media/pi/joplin-server/postgres-backup:/backup
     networks:
       - joplin-network
     healthcheck:
@@ -47,7 +47,7 @@ services:
       MAILER_NOREPLY_NAME: ${MAILER_NOREPLY_NAME}
       MAILER_NOREPLY_EMAIL: ${MAILER_NOREPLY_EMAIL}
     volumes:
-      - /mnt/joplin-usb/joplin-data:/joplin
+      - /media/pi/joplin-server/joplin-data:/joplin
     ports:
       - "22300:22300"
     networks:
@@ -62,7 +62,7 @@ services:
       - TZ=${TIMEZONE}
     volumes:
       - ./config/motioneye:/etc/motioneye
-      - /mnt/joplin-usb/camera-data:/var/lib/motioneye
+      - /media/pi/joplin-server/camera-data:/var/lib/motioneye
       - /etc/localtime:/etc/localtime:ro
     ports:
       - "8765:8765"
@@ -86,9 +86,22 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/sites-available:/etc/nginx/sites-available:ro
       - ./nginx/ssl:/etc/nginx/ssl:ro
-      - /mnt/joplin-usb/nginx-logs:/var/log/nginx
+      - /media/pi/joplin-server/nginx-logs:/var/log/nginx
+      - certbot_webroot:/var/www/certbot:ro
+      - certbot_certs:/etc/letsencrypt:ro
     networks:
       - joplin-network
+
+  # Certbot for SSL Certificates
+  certbot:
+    image: certbot/certbot:latest
+    container_name: certbot-ssl
+    restart: "no"
+    volumes:
+      - certbot_webroot:/var/www/certbot
+      - certbot_certs:/etc/letsencrypt
+      - /media/pi/joplin-server/certbot-logs:/var/log/letsencrypt
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   # Fail2ban Security
   fail2ban:
@@ -101,7 +114,7 @@ services:
       - NET_RAW
     volumes:
       - ./config/fail2ban:/data
-      - /mnt/joplin-usb/nginx-logs:/var/log/nginx:ro
+      - /media/pi/joplin-server/nginx-logs:/var/log/nginx:ro
       - /var/log:/var/log:ro
     environment:
       - TZ=${TIMEZONE}
@@ -118,4 +131,16 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /mnt/joplin-usb/postgres-data
+      device: /media/pi/joplin-server/postgres-data
+  certbot_webroot:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /media/pi/joplin-server/certbot-webroot
+  certbot_certs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /media/pi/joplin-server/certbot-certs
