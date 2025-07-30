@@ -104,7 +104,12 @@ Write-Host "`n📊 Step 8: Checking deployment status..." -ForegroundColor Yello
 Invoke-SSHCommand "cd /mnt/pendrive/joplin-server && docker-compose ps" "Check service status"
 
 Write-Host "`n🎉 Deployment completed!" -ForegroundColor Green
-Write-Host "`n📋 Useful commands:" -ForegroundColor Yellow
+Write-Host "`n📋 Next steps on your Pi:" -ForegroundColor Yellow
+Write-Host "1. chmod +x *.sh" -ForegroundColor Cyan
+Write-Host "2. ./setup-autostart.sh    # Set up autostart service" -ForegroundColor Cyan
+Write-Host "3. ./test-setup.sh         # Test the installation" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "📋 Useful commands:" -ForegroundColor Yellow
 Write-Host "View logs: ssh $PiUser@$PiIP 'cd /mnt/pendrive/joplin-server && docker-compose logs -f'" -ForegroundColor Gray
 Write-Host "Restart services: ssh $PiUser@$PiIP 'cd /mnt/pendrive/joplin-server && docker-compose restart'" -ForegroundColor Gray
 Write-Host "Create backup: ssh $PiUser@$PiIP 'cd /mnt/pendrive/joplin-server && ./scripts/backup.sh'" -ForegroundColor Gray
